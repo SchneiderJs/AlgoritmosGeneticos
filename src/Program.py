@@ -27,11 +27,54 @@ def gerar_cromossomo(distancias):
 	distancia = obter_distancia_total(cromossomo, distancias)
 	return (cromossomo, distancia)
 
+
 # Criacao das coordenadas das cidades
-random_int_x = random.sample(range(0, 100), 20)
-random_int_y = random.sample(range(0, 100), 20)
-coordenadas = {'x': [x/100 for x in random_int_x], 'y': [y/100 for y in random_int_y]}
+random_int_x = random.sample(range(0, 100), 20) # coordenada x
+random_int_y = random.sample(range(0, 100), 20) # coordenada y
+coordenadas = {'x': [x/100 for x in random_int_x], 'y': [y/100 for y in random_int_y]} # dict de coordenadas
 
 # Criacao da matriz de adjacencias
-distancias  = obter_distancias()
-print(gerar_cromossomo(distancias))
+distancias  = obter_distancias()  # matrix de adjacencia
+populacao = [gerar_cromossomo(distancias) for i in range(20)] # todos os cromossomos com a distancia total do caminho
+
+# Ordenar a população
+populacao = sorted(populacao, key= lambda s: s[1])
+
+# Roleta - Gerar
+roleta = []
+for i in range(10):
+	roleta += [(i)]*(10-i)
+
+# ------------------------- Cruzamento -------------------------------------  
+# Roleta - Sortear
+sorteadosA = [random.choice(roleta) for i in range(5)]
+sorteadosB = [random.choice(roleta) for i in range(5)]
+
+print(sorteadosA)
+print(sorteadosB)
+
+# Cruzar
+# passo 1
+def cruzarP1(paiA, paiB):
+	indice = random.randint(0,4)
+	aux = paiA[indice]
+	paiA[indice] = paiB[indice]
+	paiB[indice] = aux
+
+	return paiA, paiB
+
+
+#for indicePaiA, indicePaiB in zip (sorteadosA, sorteadosB):
+#    print(sorteadosA)
+#    paiA = populacao[indicePaiA]
+#    paiB = populacao[indicePaiB]
+#    filhoA, filhoB = cruzarP1(paiA, paiB)
+#    print("filhos")
+#    print(filhoA)
+#    print(filhoB)
+
+#print()
+#sorteadosA, sorteadosB = cruzarP1(sorteadosA, sorteadosB)
+#print(sorteadosA)
+#print(sorteadosB)
+
