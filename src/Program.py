@@ -44,6 +44,7 @@ populacao = sorted(populacao, key= lambda s: s[1])
 roleta = []
 for i in range(10):
 	roleta += [(i)]*(10-i)
+#print(roleta)
 
 # ------------------------- Cruzamento -------------------------------------  
 # Roleta - Sortear
@@ -53,28 +54,51 @@ sorteadosB = [random.choice(roleta) for i in range(5)]
 print(sorteadosA)
 print(sorteadosB)
 
-# Cruzar
-# passo 1
-def cruzarP1(paiA, paiB):
-	indice = random.randint(0,4)
-	aux = paiA[indice]
-	paiA[indice] = paiB[indice]
-	paiB[indice] = aux
+def cycle(paiA, paiB):
+	def trocar(index):
+		print("pai   a: " + str(paiA))
+		print("pai   b: " + str(paiB))
+		print()
+		aux = paiA[index]
+		paiA[index] = paiB[index]
+		paiB[index] = aux
 
-	return paiA, paiB
 
+	def verificar_duplicados():
+		for i in range(len(paiA) - 1):
+			for j in range(i + 1, len(paiA)):
+				if paiA[i] == paiA[j]:
+					return True
+		return False
 
-#for indicePaiA, indicePaiB in zip (sorteadosA, sorteadosB):
-#    print(sorteadosA)
-#    paiA = populacao[indicePaiA]
-#    paiB = populacao[indicePaiB]
-#    filhoA, filhoB = cruzarP1(paiA, paiB)
-#    print("filhos")
-#    print(filhoA)
-#    print(filhoB)
+	def passo1():
+		index = random.choice(list(range(19)))
+		index = 0
+		print("indice: " + str(index))
+		trocar(index)
+		return index
 
-#print()
-#sorteadosA, sorteadosB = cruzarP1(sorteadosA, sorteadosB)
-#print(sorteadosA)
-#print(sorteadosB)
+	def passo2(index):
+		if paiA[index] == paiB[index]:
+			return
+		for idx, a in enumerate(paiA):
+			if paiA[index] == a and idx != index:
+				trocar(idx)
+				index = idx
+				break
+		return idx
 
+	def passo3(index):
+		while verificar_duplicados():
+			index = passo2(index)
+		return paiA, paiB
+
+	idx = passo1()
+	idx = passo2(idx)
+	return passo3(idx)
+
+#print(populacao[sorteadosA[0]][0])
+filho_a, filho_b = cycle(populacao[sorteadosA[0]][0], populacao[sorteadosB[0]][0])
+
+print("filho a: " + str(filho_a))
+print("filho b: " + str(filho_b))
