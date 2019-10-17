@@ -56,9 +56,9 @@ print(sorteadosB)
 
 def cycle(paiA, paiB):
 	def trocar(index):
-		print("pai   a: " + str(paiA))
-		print("pai   b: " + str(paiB))
-		print()
+		#print("pai   a: " + str(paiA))
+		#print("pai   b: " + str(paiB))
+		#print()
 		aux = paiA[index]
 		paiA[index] = paiB[index]
 		paiB[index] = aux
@@ -73,7 +73,7 @@ def cycle(paiA, paiB):
 
 	def passo1():
 		index = random.choice(list(range(19)))
-		index = 0
+		#index = 0
 		print("indice: " + str(index))
 		trocar(index)
 		return index
@@ -97,8 +97,27 @@ def cycle(paiA, paiB):
 	idx = passo2(idx)
 	return passo3(idx)
 
+def mutacao(filho):
+	lista = list(range(19))
+	index_1 = random.choice(lista)
+	lista.remove(index_1)
+	index_2 = random.choice(lista)
+
+	aux = filho[index_1] 
+	filho[index_1] = filho[index_2]
+	filho[index_2] = aux
+
+	return filho
+
 #print(populacao[sorteadosA[0]][0])
 filho_a, filho_b = cycle(populacao[sorteadosA[0]][0], populacao[sorteadosB[0]][0])
+
+print("filho a: " + str(filho_a))
+print("filho b: " + str(filho_b))
+
+filho_a = mutacao(filho_a)
+filho_b = mutacao(filho_b)
+print()
 
 print("filho a: " + str(filho_a))
 print("filho b: " + str(filho_b))
