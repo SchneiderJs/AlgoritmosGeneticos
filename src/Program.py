@@ -1,5 +1,7 @@
 import random
 from math import sqrt
+import matplotlib.pyplot as plt
+
 
 distancia_euclidiana = lambda p1, p2: sqrt(pow(coordenadas['x'][p2] - coordenadas['x'][p1], 2) + pow(coordenadas['y'][p2] - coordenadas['y'][p1], 2))
 
@@ -47,13 +49,6 @@ for i in range(10):
 #print(roleta)
 
 # ------------------------- Cruzamento -------------------------------------  
-# Roleta - Sortear
-sorteadosA = [random.choice(roleta) for i in range(5)]
-sorteadosB = [random.choice(roleta) for i in range(5)]
-
-print(sorteadosA)
-print(sorteadosB)
-
 def cycle(paiA, paiB):
 	def trocar(index):
 		#print("pai   a: " + str(paiA))
@@ -72,9 +67,9 @@ def cycle(paiA, paiB):
 		return False
 
 	def passo1():
-		index = random.choice(list(range(19)))
+		index = random.choice(list(range(20)))
 		#index = 0
-		print("indice: " + str(index))
+		#print("indice: " + str(index))
 		trocar(index)
 		return index
 
@@ -109,15 +104,74 @@ def mutacao(filho):
 
 	return filho
 
-#print(populacao[sorteadosA[0]][0])
-filho_a, filho_b = cycle(populacao[sorteadosA[0]][0], populacao[sorteadosB[0]][0])
 
-print("filho a: " + str(filho_a))
-print("filho b: " + str(filho_b))
+def gerar_geracao(populacao):
+	mutagens = 0
+	populacao_gerada = 0
 
-filho_a = mutacao(filho_a)
-filho_b = mutacao(filho_b)
+	# Roleta - Sortear
+	sorteadosA = [random.choice(roleta) for i in range(5)]
+	sorteadosB = [random.choice(roleta) for i in range(5)]
+
+	filhos = []
+	for a, b in zip(sorteadosA, sorteadosB):
+		filho_a, filho_b = cycle(populacao[a][0], populacao[b][0])
+
+		populacao_gerada += 2
+		pm = random.randint(1, 100)
+		if pm <= 5:
+			filho_a = mutacao(filho_a)
+			filho_b = mutacao(filho_b)
+			mutagens += 1
+
+		filho_a = (filho_a, obter_distancia_total(filho_a, distancias))
+		filho_b = (filho_b, obter_distancia_total(filho_b, distancias))
+
+		filhos.append(filho_a)
+		filhos.append(filho_b)
+
+	populacao = populacao[:10]
+	for f in filhos:
+		populacao.append(f) 
+
+	populacao = sorted(populacao, key= lambda s: s[1])
+
+	return populacao, populacao_gerada, mutagens
+
 print()
+for i in populacao:
+	print(i)
 
-print("filho a: " + str(filho_a))
-print("filho b: " + str(filho_b))
+mtg, pop_g = 0, 0
+for i in range(10):
+	populacao, populacao_gerada, mutagens = gerar_geracao(populacao)
+	mtg += mutagens
+	pop_g += populacao_gerada
+
+print()
+for i in populacao:
+	print(i)
+
+
+print("Populacao inicial: " + str(len(populacao)))
+print("Populacao gerada: " + str(pop_g))
+print("Tamanho da populacao: " + str(len(populacao) + pop_g))
+print("Taxa de mutacao: " + str(mtg/pop_g))
+print("Numero de cidades: " + str(len(populacao[0][0])))
+print("Melhor custo: " + str(populacao[0][1]))
+print("Melhor solucao: " + str(populacao[0][0]))
+
+
+#plotar
+cord_x = []
+cord_y = []
+for city in populacao[0][0]:
+	cord_x.append(coordenadas['x'][city])
+	cord_y.append(coordenadas['y'][city])
+
+ax = plt.subplot(111)
+ax.scatter(cord_x, cord_y, s = 30, color = "black", marker = "X")
+
+plt.plot(cord_x, cord_y, color = "purple", linestyle="solid", linewidth=1)
+
+plt.show()
