@@ -1,9 +1,10 @@
+# -*- coding: utf-8 -*-
 import random
 from math import sqrt
 import matplotlib.pyplot as plt
 
 
-distancia_euclidiana = lambda p1, p2: sqrt(pow(coordenadas['x'][p2] - coordenadas['x'][p1], 2) + pow(coordenadas['y'][p2] - coordenadas['y'][p1], 2))
+distancia_euclidiana = lambda p1, p2: sqrt(pow(coordenadas['x'][p2]-coordenadas['x'][p1], 2) + pow(coordenadas['y'][p2]-coordenadas['y'][p1], 2))
 
 def obter_distancias():
 	distancias = []
@@ -19,12 +20,13 @@ def obter_distancia_total(cromossomo, distancias):
 	x = 0
 	for i in range(len(cromossomo)-1):
 		x += distancias[cromossomo[i]][cromossomo[i+1]]
+	# Adiciona a distância para retornar a cidade inicial
 	x += distancias[cromossomo[-1]][cromossomo[0]]
-	
+
 	return x
 
 def gerar_cromossomo(distancias):
-	# lista aleatória sem numeros duplicados 
+	# lista aleatória sem numeros duplicados
 	cromossomo = random.sample(range(20), 20)
 	distancia = obter_distancia_total(cromossomo, distancias)
 	return (cromossomo, distancia)
@@ -46,14 +48,10 @@ populacao = sorted(populacao, key= lambda s: s[1])
 roleta = []
 for i in range(10):
 	roleta += [(i)]*(10-i)
-#print(roleta)
 
-# ------------------------- Cruzamento -------------------------------------  
+# ------------------------- Cruzamento -------------------------------------
 def cycle(paiA, paiB):
 	def trocar(index):
-		#print("pai   a: " + str(paiA))
-		#print("pai   b: " + str(paiB))
-		#print()
 		aux = paiA[index]
 		paiA[index] = paiB[index]
 		paiB[index] = aux
@@ -68,8 +66,6 @@ def cycle(paiA, paiB):
 
 	def passo1():
 		index = random.choice(list(range(20)))
-		#index = 0
-		#print("indice: " + str(index))
 		trocar(index)
 		return index
 
@@ -84,6 +80,7 @@ def cycle(paiA, paiB):
 		return idx
 
 	def passo3(index):
+		# Enquanto o paiA tiver genes repetidos, troca genes com o paiB
 		while verificar_duplicados():
 			index = passo2(index)
 		return paiA, paiB
@@ -93,12 +90,13 @@ def cycle(paiA, paiB):
 	return passo3(idx)
 
 def mutacao(filho):
+	# Escolhe dois genes para inverter no cromossomo
 	lista = list(range(19))
 	index_1 = random.choice(lista)
 	lista.remove(index_1)
 	index_2 = random.choice(lista)
 
-	aux = filho[index_1] 
+	aux = filho[index_1]
 	filho[index_1] = filho[index_2]
 	filho[index_2] = aux
 
@@ -106,7 +104,7 @@ def mutacao(filho):
 
 
 def gerar_geracao(populacao):
-	mutagens = 0
+	qtdMutacoes = 0
 	populacao_gerada = 0
 
 	# Roleta - Sortear
@@ -114,39 +112,51 @@ def gerar_geracao(populacao):
 	sorteadosB = [random.choice(roleta) for i in range(5)]
 
 	filhos = []
-	for a, b in zip(sorteadosA, sorteadosB):
-		filho_a, filho_b = cycle(populacao[a][0], populacao[b][0])
+	for paiA, paiB in zip(sorteadosA, sorteadosB):
+		# Realiza o cruzamento
+		filho_a, filho_b = cycle(populacao[paiA][0], populacao[paiB][0])
 
 		populacao_gerada += 2
+
+		# Aplica mutação se pm for menor ou igual a 5
 		pm = random.randint(1, 100)
 		if pm <= 5:
 			filho_a = mutacao(filho_a)
-			filho_b = mutacao(filho_b)
-			mutagens += 1
+			qtdMutacoes += 1
 
+		pm = random.randint(1, 100)
+		if pm <= 5:
+			filho_b = mutacao(filho_b)
+			qtdMutacoes += 1
+
+        # Encapsula os cromossomos em uma tupla
 		filho_a = (filho_a, obter_distancia_total(filho_a, distancias))
 		filho_b = (filho_b, obter_distancia_total(filho_b, distancias))
 
 		filhos.append(filho_a)
 		filhos.append(filho_b)
 
+    # Substitui os 10 ultimos cromossomos pelos 10 novos filhos
 	populacao = populacao[:10]
 	for f in filhos:
-		populacao.append(f) 
+		populacao.append(f)
 
+	# Ordena a populção com os novos cromossomos
 	populacao = sorted(populacao, key= lambda s: s[1])
 
-	return populacao, populacao_gerada, mutagens
+	return populacao, populacao_gerada, qtdMutacoes
 
 print()
 for i in populacao:
 	print(i)
 
-mtg, pop_g = 0, 0
-for i in range(10):
-	populacao, populacao_gerada, mutagens = gerar_geracao(populacao)
-	mtg += mutagens
-	pop_g += populacao_gerada
+qtdMutacoes, pop_g = 0, 0
+# Aplica o algoritmo genético com o critério de parada de 10000
+# repetições
+for i in range(10000):
+	populacao, qtdPopulacaoGerada, mutacoes = gerar_geracao(populacao)
+	qtdMutacoes += mutacoes
+	pop_g += qtdPopulacaoGerada
 
 print()
 for i in populacao:
@@ -155,11 +165,11 @@ for i in populacao:
 
 print("Populacao inicial: " + str(len(populacao)))
 print("Populacao gerada: " + str(pop_g))
-print("Tamanho da populacao: " + str(len(populacao) + pop_g))
-print("Taxa de mutacao: " + str(mtg/pop_g))
+print("Tamanho da população: " + str(len(populacao) + pop_g))
+print("Taxa de mutação: " + str((qtdMutacoes/pop_g)*100) + "%")
 print("Numero de cidades: " + str(len(populacao[0][0])))
 print("Melhor custo: " + str(populacao[0][1]))
-print("Melhor solucao: " + str(populacao[0][0]))
+print("Melhor solução: " + str(populacao[0][0]))
 
 
 #plotar
@@ -170,8 +180,19 @@ for city in populacao[0][0]:
 	cord_y.append(coordenadas['y'][city])
 
 ax = plt.subplot(111)
+ax.set_xlabel("Coordenada X", fontsize = 10)
+ax.set_ylabel("Coordenada Y", fontsize = 10)
+ax.set_title("Percurso das cidades", fontsize = 15)
 ax.scatter(cord_x, cord_y, s = 30, color = "black", marker = "X")
 
+
+cord_x.append(cord_x[0])
+cord_y.append(cord_y[0])
+# Liga as cidades
 plt.plot(cord_x, cord_y, color = "purple", linestyle="solid", linewidth=1)
+
+# Exibe o nome das cidades no gráfico
+for index, city in enumerate(populacao[0][0]):
+	ax.annotate(city, (cord_x[index], cord_y[index]), color="r")
 
 plt.show()
