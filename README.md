@@ -41,6 +41,3 @@ Exemplo de Recombinação Cycle:
 <img src="Images/Cycle.png"> 
 
 - O operador de mutação escolhe aleatoriamente dois números inteiros em um cromossomo da nova geração e os troca. O operador de mutação atua sobre cada membro da nova geração com probabilidade de 0,05
-
-### Desenvolvimento:
-[Aqui](src/Documentacao.html) você encontra a documentação dos métodos criados.
