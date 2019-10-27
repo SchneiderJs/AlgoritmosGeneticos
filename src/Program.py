@@ -12,7 +12,7 @@ def obter_distancias():
 	Retorna
 	-------
 		list de floats
-			Uma lisata contendo a distância de qualquer ponto até qualquer outro
+			Uma lista contendo a distância de qualquer ponto até qualquer outro
 			ponto
 	"""
 	distancias = []
@@ -33,7 +33,7 @@ def obter_distancia_total(cromossomo, distancias):
 		cromossomo : lista de ints
 			Uma lista contendo a ordem em que se deve percorrer as cidades
 		distancias : lista de floats
-			Uma lista contendo a distancia entre as cidades
+			Uma lista contendo a distância entre as cidades
 	Retornos
 	--------
 		float
@@ -49,13 +49,13 @@ def obter_distancia_total(cromossomo, distancias):
 	return x
 
 def gerar_cromossomo(distancias):
-	"""Esta funcao calcula gera um cromossomo com a ordem que as cidades
+	"""Esta função gera um cromossomo com a ordem que as cidades
 	devem ser percorridas e a distância total do percurso
 
 	Parâmetros
 	----------
 		distancias : list de floats
-			Uma lista contendo a distancia entre as cidades
+			Uma lista contendo a distância entre as cidades
 
 	Retornos
 	--------
@@ -64,19 +64,19 @@ def gerar_cromossomo(distancias):
 			cidades devem ser percorridas e o segundo elemento é a distância
 			total do caminho
 	"""
-	# lista aleatória sem numeros duplicados
+	# lista aleatória sem números duplicados
 	cromossomo = random.sample(range(20), 20)
 	distancia = obter_distancia_total(cromossomo, distancias)
 	return (cromossomo, distancia)
 
 
-# Criacao das coordenadas das cidades
+# Criação das coordenadas das cidades
 random_int_x = random.sample(range(0, 100), 20) # coordenada x
 random_int_y = random.sample(range(0, 100), 20) # coordenada y
 coordenadas = {'x': [x/100 for x in random_int_x], 'y': [y/100 for y in random_int_y]} # dict de coordenadas
 
-# Criacao da matriz de adjacencias
-distancias  = obter_distancias()  # matrix de adjacencia
+# Criação da matriz de adjacências
+distancias  = obter_distancias()  # matrix de adjacência
 populacao = [gerar_cromossomo(distancias) for i in range(20)] # todos os cromossomos com a distancia total do caminho
 
 # Ordenar a população
@@ -103,13 +103,13 @@ def cycle(paiA, paiB):
 			Retorna uma lista contendon dois novos cromossomos
 	"""
 	def trocar(index):
-		"""Esta função realiza a troca dos genes do pai a e b indicados pelo
-		indice
+		"""Esta função realiza a troca dos genes do pai "a" e "b" indicados pelo
+		índice
 
 		Parâmetros
 		----------
 			index : int
-				O indice que deve ser utilizado na troca dos genes
+				O índice que deve ser utilizado na troca dos genes
 		"""
 		aux = paiA[index]
 		paiA[index] = paiB[index]
@@ -117,12 +117,12 @@ def cycle(paiA, paiB):
 
 
 	def verificar_duplicados():
-		"""Esta função verifica se o cromossomo pai a possui genes duplicados
+		"""Esta função verifica se o cromossomo pai "a" possui genes duplicados
 
 		Retornos
 		--------
 			boolean
-				Caso o pai a possua genes repetidos a função retorna "True" senão
+				Caso o pai "a" possua genes repetidos a função retorna "True" senão
 				ela retorna "False"
 		"""
 		for i in range(len(paiA) - 1):
@@ -133,30 +133,30 @@ def cycle(paiA, paiB):
 
 	def passo1():
 		"""Esta função escolhe aleatoriamente um gene para ser trocado entre
-		o pai a e b e realiza a troca
+		o pai "a" e "b" e realiza a troca
 
 		Retornos
 		--------
 			int
-				O indice do gene que foi efetuado a troca
+				O índice do gene que foi efetuado a troca
 		"""
 		index = random.choice(list(range(20)))
 		trocar(index)
 		return index
 
 	def passo2(index):
-		"""Esta função realiza uma troca de genes entre os cromossomos pai a
-		e b, o indice da troca é definido pelo gene repetido no pai a
+		"""Esta função realiza uma troca de genes entre os cromossomos pai "a"
+		e "b", o índice da troca é definido pelo gene repetido no pai "a"
 
 		Parâmetros
 		----------
 			index : int
-				O valor do indice em que se ocorreu a ultima troca
+				O valor do índice em que se ocorreu a última troca
 
 		Retornos
 		--------
 			int
-				Retorna o indice em que foi efetuado a troca
+				Retorna o índice em que foi efetuado a troca
 		"""
 		if paiA[index] == paiB[index]:
 			return
@@ -168,7 +168,7 @@ def cycle(paiA, paiB):
 		return idx
 
 	def passo3(index):
-		"""Esta função realiza a troca de genes até que o cromossomo pai a
+		"""Esta função realiza a troca de genes até que o cromossomo pai "a"
 		não possua mais genes repetidos
 
 		Parâmetros
@@ -180,9 +180,9 @@ def cycle(paiA, paiB):
 		--------
 			list
 				Retorna dois novos cromossomos que surgiram a partir do
-				cruzamento do pai a e b
+				cruzamento do pai "a" e "b"
 		"""
-		# Enquanto o paiA tiver genes repetidos, troca genes com o paiB
+		# Enquanto o pai "a" tiver genes repetidos, troca genes com o pai "b"
 		while verificar_duplicados():
 			index = passo2(index)
 		return paiA, paiB
@@ -193,7 +193,7 @@ def cycle(paiA, paiB):
 
 def mutacao(filho):
 	"""Esta função realiza a mutação no cromossomo filho. A mutação
-	consiste em inverter o valores de dois indices selecionados aleatoriamente
+	consiste em inverter o valores de dois índices selecionados aleatoriamente
 
 	Parâmetros
 	----------
@@ -222,7 +222,7 @@ def mutacao(filho):
 
 
 def gerar_geracao(populacao):
-	"""Está função realiaza a execução do algoritmo genético a partir de
+	"""Está função realiza a execução do algoritmo genético a partir de
 	uma população passada por parâmetro
 
 	Parâmetros
@@ -234,8 +234,8 @@ def gerar_geracao(populacao):
 	Retornos
 	--------
 		list
-			Retorna uma lista com a nova população, retorna a quantidade de
-			individuos gerados e a quantidade dos individuos que foram mutados
+			Retorna uma lista com a nova população, a quantidade de
+			indivíduos gerados e a quantidade dos indivíduos que foram mutados
 
 	"""
 	qtdMutacoes = 0
